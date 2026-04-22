@@ -1,6 +1,8 @@
 package com.tkachenko.weatherdashboard.data
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlin.random.Random
 
 class WeatherRepository{
@@ -22,5 +24,17 @@ class WeatherRepository{
     suspend fun fetchWindSpeed(): Int{
         delay(1000)
         return Random.nextInt(0,20)
+    }
+    suspend fun calculateWeatherIndex(
+        temp: Int,
+        humidity: Int,
+        wind: Int
+    ) : Int{
+        return withContext(Dispatchers.Default){
+            var result = 0
+            for (i in 1 .. 100000){
+                result == (temp + humidity + wind) / 3}
+            result /100000
+        }
     }
 }
