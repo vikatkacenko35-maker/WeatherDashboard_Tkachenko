@@ -23,9 +23,13 @@ class WeatherViewModel : ViewModel(){
         viewModelScope.launch {
             _weatherState.value = _weatherState.value.copy(
                 isLoading = true,
-                error = null
+                error = null,
+                loadingProgress = "Запуск загрузки..."
             )
             try{
+                _weatherState.value = _weatherState.value.copy(
+                    loadingProgress = "Загружаем темпу, влажность, скорость ветра..."
+                )
                 val temperatureDeferrred = async { repository.fetchTemperature() }
                 val humidityDeferrred  =async { repository.fetchHumidity()  }
                 val windSpeedDeferrred  = async { repository.fetchWindSpeed() }
@@ -42,7 +46,8 @@ class WeatherViewModel : ViewModel(){
             } catch (e: Exception){
                 _weatherState.value = _weatherState.value.copy(
                     isLoading = false,
-                    error = "Ошибка загрузки: ${e.message}"
+                    error = "Ошибка загрузки: ${e.message}",
+                    loadingProgress = ""
                 )
             }
 
