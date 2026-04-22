@@ -11,13 +11,29 @@ import com.tkachenko.weatherdashboard.data.WeatherData
 import com.tkachenko.weatherdashboard.data.WeatherRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 
 class WeatherViewModel : ViewModel(){
+    private fun startAutoRefresh(){
+        viewModelScope.launch {
+            flow {
+                while (true){
+                    delay(10000)
+                    emit(Unit)
+                }
+            }.collect{
+                loadWeatherData()
+            }
+        }
+    }
     private val repository = WeatherRepository()
     private val _weatherState = MutableStateFlow(WeatherData())
     val weatherState: StateFlow<WeatherData> = _weatherState.asStateFlow()
     init{
         loadWeatherData()
+        startAutoRefresh()
     }
     fun toggleErrorSimulation(){
         repository.toggleErrorSimulation()

@@ -1,5 +1,6 @@
 package com.tkachenko.weatherdashboard
 
+import android.R
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -94,6 +95,16 @@ fun WeatherDashboardScreen(
                 title = "Weather Index",
                 value = "${weatherState.weatherIndex}",
                 isLoading = false
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "refreshim",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
 
