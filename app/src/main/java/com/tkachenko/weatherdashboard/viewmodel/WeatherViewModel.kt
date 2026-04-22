@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.tkachenko.weatherdashboard.data.WeatherData
 import com.tkachenko.weatherdashboard.data.WeatherRepository
+import kotlinx.coroutines.async
 
 class WeatherViewModel : ViewModel(){
     private val repository = WeatherRepository()
@@ -25,13 +26,19 @@ class WeatherViewModel : ViewModel(){
                 error = null
             )
             try{
-                val temperature = repository.fetchTemperature()
-                _weatherState.value = _weatherState.value.copy(temperature = temperature)
-                val humidity = repository.fetchHumidity()
-                _weatherState.value = _weatherState.value.copy(humidity = humidity)
-                val windSpeed = repository.fetchWindSpeed()
-                _weatherState.value = _weatherState.value.copy(windSpeed = windSpeed)
-                _weatherState.value = _weatherState.value.copy(isLoading = false)
+                val temperatureDeferrred = async { repository.fetchTemperature() }
+                val humidityDeferrred  =async { repository.fetchHumidity()  }
+                val windSpeedDeferrred  = async { repository.fetchWindSpeed() }
+                val temperature = temperatureDeferrred.await()
+                val humidity = temperatureDeferrred.await()
+                val windSpeed = temperatureDeferrred.await()
+                _weatherState.value = WeatherData(
+                    temperature = temperature,
+                    humidity = humidity,
+                    windSpeed = windSpeed,
+                    isLoading = false,
+                    error = null
+                )
             } catch (e: Exception){
                 _weatherState.value = _weatherState.value.copy(
                     isLoading = false,
